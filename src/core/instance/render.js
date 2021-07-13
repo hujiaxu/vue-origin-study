@@ -28,9 +28,13 @@ export function initRender (vm: Component) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+
+
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
+
+  // 与上面的vm._c一样，只不过面向对象不一，vm.$createElement 是 对用户暴露的render方法，
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 
   // $attrs & $listeners are exposed for easier HOC creation.
@@ -68,9 +72,13 @@ export function renderMixin (Vue: Class<Component>) {
 
   Vue.prototype._render = function (): VNode {
     const vm: Component = this
+
+    // 这个$options到底存储了多少东西
     const { render, _parentVnode } = vm.$options
 
     if (_parentVnode) {
+
+      // 这个normalizeScopedSlots函数是干嘛用的
       vm.$scopedSlots = normalizeScopedSlots(
         _parentVnode.data.scopedSlots,
         vm.$slots,
@@ -88,6 +96,8 @@ export function renderMixin (Vue: Class<Component>) {
       // separately from one another. Nested component's render fns are called
       // when parent component is patched.
       currentRenderingInstance = vm
+
+      // 这一段代码又是什么意思呢，render函数为什么需要在vm._renderProxy中实现，
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
       handleError(e, vm, `render`)

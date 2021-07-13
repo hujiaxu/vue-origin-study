@@ -15,6 +15,8 @@ export function resolveSlots (
   const slots = {}
 
   // 这个目的是什么 如果只能执行一次，为什么要循环呢
+  // 不好意思，这里把  l 看成 1 了
+  // 这里遍历每个child，对每个child的slot属性做相关操作
   for (let i = 0, l = children.length; i < l; i++) {
     const child = children[i]
     const data = child.data
@@ -28,8 +30,12 @@ export function resolveSlots (
       data && data.slot != null
     ) {
       const name = data.slot
+
+      // 把 slot 赋值为 slots[name] 或者 为 []
       const slot = (slots[name] || (slots[name] = []))
       if (child.tag === 'template') {
+
+        // 这是什么骚操作
         slot.push.apply(slot, child.children || [])
       } else {
         slot.push(child)
