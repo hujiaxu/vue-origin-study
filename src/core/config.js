@@ -35,7 +35,7 @@ export type Config = {
   _lifecycleHooks: Array<string>;
 };
 
-export default ({
+export default ({ // 这种 export default 有些奇怪, 是给导出的对象 定义 Config 类型
   /**
    * Option merge strategies (used in core/util/options)
    */

@@ -23,6 +23,8 @@ export function isFalse (v: any): boolean %checks {
 /**
  * Check if value is primitive.
  */
+
+// 判断这个  value 是不是 原始类型(值类型)
 export function isPrimitive (value: any): boolean %checks {
   return (
     typeof value === 'string' ||
@@ -71,6 +73,7 @@ export function isValidArrayIndex (val: any): boolean {
   return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
+// 这样就可以判断 Promise 类型了吗
 export function isPromise (val: any): boolean {
   return (
     isDef(val) &&

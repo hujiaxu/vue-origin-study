@@ -25,14 +25,19 @@ const ALWAYS_NORMALIZE = 2
 
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
+
+// createElement 主要是对 参数做出相应的转化，
+// 将元素转换为VNode的工作还是交给了_createElement
 export function createElement (
   context: Component,
   tag: any,
   data: any,
   children: any,
-  normalizationType: any,
-  alwaysNormalize: boolean
+  normalizationType: any,   // 这个normalizationType 标准类型起了什么作用
+  alwaysNormalize: boolean  // 这个标准化 是什么意思，传入这个值有什么作用
 ): VNode | Array<VNode> {
+
+  // 如果data是 数组或者原始类型的话，则将 data 转换到children上，data变成undefined
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -118,7 +123,7 @@ export function _createElement (
       vnode = new VNode(
         tag, data, children,
         undefined, undefined, context
-      )
+      )  
     }
   } else {
     // direct component options / constructor
