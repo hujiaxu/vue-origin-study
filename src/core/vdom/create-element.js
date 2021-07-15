@@ -20,6 +20,9 @@ import {
   simpleNormalizeChildren
 } from './helpers/index'
 
+
+// 这两个值的定义有什么区别吗，1和2代表了什么不同的含义吗
+
 const SIMPLE_NORMALIZE = 1
 const ALWAYS_NORMALIZE = 2
 
@@ -33,7 +36,10 @@ export function createElement (
   tag: any,
   data: any,
   children: any,
-  normalizationType: any,   // 这个normalizationType 标准类型起了什么作用
+
+  // 这个normalizationType 标准类型起了什么作用
+  // 根据这个值的不同，来调用不同的方法规范children
+  normalizationType: any,   
   alwaysNormalize: boolean  // 这个标准化 是什么意思，传入这个值有什么作用
 ): VNode | Array<VNode> {
 
@@ -44,7 +50,7 @@ export function createElement (
     data = undefined
   }
   if (isTrue(alwaysNormalize)) {
-    normalizationType = ALWAYS_NORMALIZE
+    normalizationType = ALWAYS_NORMALIZE // ALWAYS_NORMALIZE = 2
   }
   return _createElement(context, tag, data, children, normalizationType)
 }
@@ -65,18 +71,24 @@ export function _createElement (
     return createEmptyVNode()
   }
   // object syntax in v-bind
+  // 这个 data.is代表什么意思
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
   if (!tag) {
     // in case of component :is set to falsy value
+    // in case of：万一；如果发生；假设
     return createEmptyVNode()
   }
-  // warn against non-primitive key
+  // warn against non-primitive key  对非基元键发出警告
+  // non-primitive：非初级的。primitive：原始的，远古的；简单的，粗糙的。
+  // 这个data.key是什么，代表什么含义；
+  // 这个data是从哪来的，怎么包装来的，data里面还有什么东西。
+  // data存储了很多可以标识这个 元素是什么类型的，是标签还是组件
   if (process.env.NODE_ENV !== 'production' &&
     isDef(data) && isDef(data.key) && !isPrimitive(data.key)
   ) {
-    if (!__WEEX__ || !('@binding' in data.key)) {
+    if (!__WEEX__ || !('@binding' in data.key)) { // data.key 存储了元素的属性？
       warn(
         'Avoid using non-primitive value as key, ' +
         'use string/number value instead.',
@@ -114,7 +126,9 @@ export function _createElement (
         undefined, undefined, context
       )
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
-      // component
+      // component 组件
+      // 如果是一个组件则通过createComponent
+      // 它是怎么判断这个元素是不是一个组件的
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
       // unknown or unlisted namespaced elements
