@@ -29,6 +29,10 @@ export function simpleNormalizeChildren (children: any) {
 // with hand-written render functions / JSX. In such cases a full normalization
 // is needed to cater to all possible types of children values.
 export function normalizeChildren (children: any): ?Array<VNode> {
+
+  // 为什么要在这个时候判断 children是不是一个原始类型呢
+  // 如果是原始类型的话，创建一个关于 children值的文本节点
+  // 如果不是原始类型的话，再接着判断children是不是一个数组，如果是一个数组，则交给normalizeArrayChildren函数处理
   return isPrimitive(children)
     ? [createTextVNode(children)]
     : Array.isArray(children)
@@ -53,6 +57,7 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
       if (c.length > 0) {
         c = normalizeArrayChildren(c, `${nestedIndex || ''}_${i}`)
         // merge adjacent text nodes
+        // 如果存在两个连续的文本节点，则把它们合并成一个文本节点
         if (isTextNode(c[0]) && isTextNode(last)) {
           res[lastIndex] = createTextVNode(last.text + (c[0]: any).text)
           c.shift()

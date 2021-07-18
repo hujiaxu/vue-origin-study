@@ -113,6 +113,7 @@ export function _createElement (
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    // 内置的节点
     if (config.isReservedTag(tag)) {
       // platform built-in elements
       if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.nativeOn) && data.tag !== 'component') {
@@ -125,15 +126,21 @@ export function _createElement (
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
+
+      // 已注册过的组件名
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component 组件
       // 如果是一个组件则通过createComponent
       // 它是怎么判断这个元素是不是一个组件的
+
+      // 这个Ctor是干嘛用的
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
       // parent normalizes children
+      
+      // 不知道的或者列表里没有的命名元素，直接创建vnode
       vnode = new VNode(
         tag, data, children,
         undefined, undefined, context
