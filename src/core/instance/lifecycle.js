@@ -18,9 +18,11 @@ import {
   invokeWithErrorHandling
 } from '../util/index'
 
-export let activeInstance: any = null
+// 激活的实例，这个导出在哪里用到了，起了什么作用，这个只在首次渲染期间或者更新期间发生变化了
+export let activeInstance: any = null                   
 export let isUpdatingChildComponent: boolean = false
 
+// 这个 写法有些奇怪啊
 export function setActiveInstance(vm: Component) {
   const prevActiveInstance = activeInstance
   activeInstance = vm
@@ -56,6 +58,9 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+
+  // 私有方法，被调用时机有 2 个，一个是首次渲染，一个是数据变化 驱动 视图更新
+  // 首次 和 更新的 区别方法是 根据当前实例 有没有 _vnode，这个_vnode代表了什么？
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -65,14 +70,21 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
+      // 首次渲染
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
+      // 更新
       // updates
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
+    // 渲染完再 重置 activeInstance 为 null
+    // 在这里猜测：activeInstance的变化 会影响其他组件或者元素的更新，
+    // 或者会影响 其它依赖于_update生命钩子的相关实例属性
     restoreActiveInstance()
     // update __vue__ reference
+    // 在这里为什么判断两次呢，在该钩子执行的时候不是已经执行代码：const prevEl = vm.$el 了吗？
+    // 猜测：vm.$el在 __patch__ 的时候会发生变化
     if (prevEl) {
       prevEl.__vue__ = null
     }
